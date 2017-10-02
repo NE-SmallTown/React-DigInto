@@ -1,0 +1,21 @@
+.sidebar-wrap {
+    position: absolute;
+
+    top: 0;
+    width: 300px;
+    min-height: 300px;
+
+    background-color: #c5c5c5;
+
+    overflow: hidden;
+}
+
+.app-wrap > :nth-child(2) {
+    margin-left: 320px;
+}
+
+.test-link-react {
+    display: block;
+
+    margin-bottom: 20px;
+}
