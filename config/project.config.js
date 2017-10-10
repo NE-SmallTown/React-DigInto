@@ -108,7 +108,7 @@ fs.readdirSync(path.resolve(__dirname, '../src/tests')).forEach(dir => {
 
     if (fileName.startsWith('test$$')) {
       curDir[fileName] = {};
-      curDir[fileName].menuTitle = fileName.slice(7, -3);
+      curDir[fileName].menuTitle = fileName.slice(6, -3);
       curDir[fileName].fileLinkInReactRepo = fileLinkInReactRepo[fileName.slice(0, -3)];
       curDir[fileName].fileContent = fileContent;
     }

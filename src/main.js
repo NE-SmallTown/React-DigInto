@@ -8,6 +8,7 @@ let render = () => {
   const AppContainer = require('./AppContainer').default;
   const routes = require('./routes/index').default;
 
+  debugger;
   ReactDOM.render(
     <AppContainer routes={routes} />,
     MOUNT_NODE

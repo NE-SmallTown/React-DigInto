@@ -5,8 +5,6 @@
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import Menu, { SubMenu, Item as MenuItem } from 'rc-menu';
 import animate from 'css-animation';

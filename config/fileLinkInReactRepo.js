@@ -5,6 +5,6 @@
  */
 
 module.exports = {
-  'test$$_it_should_batch_childOrParent_state_updates_together': '"github.com/facebook/react/blob/' +
-    'a947d3f92fba61ba9107861dde9e4ea89ad87442/src/renderers/__tests__/ReactUpdates-test.js#L166"'
+  'test$$should_fail_when_passed_two_children': '"github.com/facebook/react/blob/' +
+    'master/src/isomorphic/children/__tests__/onlyChild-test.js#L29"'
 };

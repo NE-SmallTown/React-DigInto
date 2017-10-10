@@ -7,6 +7,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+console.log('%c Test file: test$$should fail when passed two children %c start!', 'font-size: 20px; color: blue', 'color: green; font-size: 30px');
+
 export default function main () {
   var WrapComponent;
 
@@ -30,8 +32,10 @@ export default function main () {
           <span />
         </WrapComponent>
       );
-      debugger;
+
       React.Children.only(instance.props.children);
     }).toThrow();
   });
 }
+
+console.log('%c Test file: test$$should fail when passed two children %c end!', 'font-size: 20px; color: blue', 'color: green; font-size: 30px')
