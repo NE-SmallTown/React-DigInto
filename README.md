@@ -13,7 +13,7 @@ Currently I just start the work, so the docs are just for back up.
 
 The src directory are used for explore the src code expediently.
 
-Now I will just put the [flow chart](https://github.com/NE-SmallTown/React-DigInto/tree/master/docs/flowChartOfReactSrcCode.svg) to the docs.But if I complete my work, I will try my best to write a artcile(maybe gitbook?)
+Now I will just put the [flow chart file](https://github.com/NE-SmallTown/React-DigInto/tree/master/docs/flowChartOfReactSrcCode.svg) or [online (choose open in draw.io would be better)](https://drive.google.com/file/d/0BxhlS0xaF79gaDZ2a25DNk8wejg/view?usp=sharing) to the docs.But if I complete my work, I will try my best to write a artcile(maybe gitbook?)
 to explain all things in detail.
 
 # License  MIT
