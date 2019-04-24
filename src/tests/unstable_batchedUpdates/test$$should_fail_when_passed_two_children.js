@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom';
 console.log('%c Test file: test$$should fail when passed two children %c start!', 'font-size: 20px; color: blue', 'color: green; font-size: 30px');
 
 export default function main () {
-  var WrapComponent;
+  let WrapComponent;
 
   beforeEach(() => {
     WrapComponent = class extends React.Component {
@@ -25,8 +25,8 @@ export default function main () {
   });
 
   it('should fail when passed two children', () => {
-    expect(function() {
-      var instance = (
+    expect(function () {
+      const instance = (
         <WrapComponent>
           <div />
           <span />
@@ -38,4 +38,4 @@ export default function main () {
   });
 }
 
-console.log('%c Test file: test$$should fail when passed two children %c end!', 'font-size: 20px; color: blue', 'color: green; font-size: 30px')
+console.log('%c Test file: test$$should fail when passed two children %c end!', 'font-size: 20px; color: blue', 'color: green; font-size: 30px');

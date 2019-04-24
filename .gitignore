@@ -4,5 +4,7 @@ node_modules
 
 /lib
 
+/react-build
+
 npm-debug.log
 

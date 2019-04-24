@@ -19,7 +19,11 @@ export default function main () {
 
     render () {
       return (
-        <h3 style={{ color: this.props.color }}>Child!</h3>
+        <h3
+          onClick={() => { this.setState({ childFoo : 'child_foo_updated' }); }}
+        >
+            Click Child! {this.state.childFoo}
+        </h3>
       );
     }
   }
@@ -45,12 +49,12 @@ export default function main () {
 
     render () {
       return (
-        <div>
-          <h1>Parent!</h1>
+        <div onClick={() => { this.setState({ parentFoo: 'parent_foo_updated' }); }}>
+          <h1>Parent! {this.state.parentFoo}</h1>
 
           <div>-----------------------------------</div>
 
-          <Child color="red" />
+          <Child />
         </div>
       );
     }
