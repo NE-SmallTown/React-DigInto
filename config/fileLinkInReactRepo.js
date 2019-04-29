@@ -12,5 +12,7 @@ module.exports = {
   'test$$test_key_validate': 'https://github.com/facebook/react',
   'test$$diff': 'https://github.com/facebook/react',
   'test$$component_diff': 'https://github.com/facebook/react',
-  'test$$component_async': 'https://github.com/facebook/react'
+  'test$$component_async': 'https://github.com/facebook/react',
+  'test$$component_hooks': 'https://github.com/facebook/react',
+  'test$$component_suspense': 'https://github.com/facebook/react',
 };

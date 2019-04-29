@@ -79,6 +79,7 @@ export default class AppSideBar extends React.PureComponent {
 
                     return (
                       <MenuItem key={`${dir}/${fileName}`}>
+                        {/* TODO 下面用 a 标签 _blink，起一个 koa 的 server，把对应页面的 js 注入进行，现在这样有影响 */}
                         <Link to={`/tests/${dir}/${fileName.slice(0, -3)}`} title="click me to execute test">
                           {menuTitle}
                         </Link>

@@ -15,7 +15,7 @@ export default function main () {
   class Bar extends React.Component {
     render () {
       return (
-        <div>bar {this.props.prop + ''}</div>
+        <div>bar{this.props.prop}</div>
       );
     }
   }
@@ -29,13 +29,12 @@ export default function main () {
       // });
 
       // debugger
-      console.log('componentDidMount');
       setTimeout(() => {
         // debugger
         this.setState({
           show: true
         });
-      }, 3000);
+      }, 2000);
     }
     
     componentDidUpdate () {
@@ -48,26 +47,22 @@ export default function main () {
           <p>foo</p>
           {this.state.show && <div>show</div>}
           {this.props.children}
-          <Bar prop={this.state.show}>!!!</Bar>
+          <Bar prop={222}>!!!</Bar>
         </div>
       );
     }
   }
-
-  debugger;
+  suspense 和 hooks 单独建个文件测试
   ReactDOM.render(
     <div id="my-root-container">
       <Foo id="notC">
-        <div>no mode</div>
+        <div>children1</div>
       </Foo>
-      
-      <div>-------------------------- divider ------------------------------</div>
-      
-      <React.unstable_ConcurrentMode>
+      <React.ConcurrentMode>
         <Foo id="C">
-          <div>unstable_ConcurrentMode</div>
+          <div>children1</div>
         </Foo>
-      </React.unstable_ConcurrentMode>
+      </React.ConcurrentMode>
     </div>,
     el,
   );
