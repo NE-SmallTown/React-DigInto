@@ -11,6 +11,7 @@ module.exports = {
   'test$$test_deterministic_update': 'https://github.com/facebook/react/pull/10715',
   'test$$test_key_validate': 'https://github.com/facebook/react',
   'test$$diff': 'https://github.com/facebook/react',
+  'test$$dif2': 'https://github.com/facebook/react',
   'test$$component_diff': 'https://github.com/facebook/react',
   'test$$component_async': 'https://github.com/facebook/react',
   'test$$component_hooks': 'https://github.com/facebook/react',
