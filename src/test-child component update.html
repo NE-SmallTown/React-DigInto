@@ -1,0 +1,74 @@
+<head>
+    <script src="https://unpkg.com/@babel/standalone@7.5.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.8.6/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.6/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+<div id="container"></div>
+</body>
+
+<script type="text/babel">
+  class Foo extends React.Component {
+    state = { q: 3 };
+
+    // componentDidMount() {
+    //   setTimeout(() => {
+    //     debugger;
+    //
+    //     console.log('Foo update');
+    //
+    //     this.setState({ q: 4 });
+    //   }, 2000);
+    // }
+
+    render() {
+      console.log('Foo render');
+
+      return <div>{this.props.children} qqqq {this.state.q} foo</div>;
+    }
+  }
+
+  function Bar() {
+    console.log('Bar render');
+
+    return <div>222</div>;
+  }
+
+  function Baz() {
+    console.log('Baz render');
+
+    return <div>222</div>;
+  }
+
+
+  class App extends React.Component {
+    componentDidMount() {
+      setTimeout(() => {
+        debugger;
+
+        console.log('App update');
+
+        this.setState({});
+      }, 2000);
+    }
+
+    render() {
+      console.log('App render');
+
+      return (
+        <div>
+          <h1>Hello, {this.props.name}</h1>
+
+          <Foo>
+            <Bar/>
+
+            <Baz/>
+          </Foo>
+        </div>
+      );
+    }
+  }
+
+  ReactDOM.render(<App name="world"/>, document.getElementById('container'));
+</script>
