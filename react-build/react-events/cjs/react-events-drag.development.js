@@ -15,6 +15,8 @@ if (process.env.NODE_ENV !== "production") {
   (function() {
 'use strict';
 
+var React = require('react');
+
 /*
 object-assign
 (c) Sindre Sorhus
@@ -106,57 +108,40 @@ var objectAssign = shouldUseNative() ? Object.assign : function (target, source)
 	return to;
 };
 
-// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-// nor polyfill, then a plain number is used for performance.
-var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var REACT_EVENT_COMPONENT_TYPE = hasSymbol ? Symbol.for('react.event_component') : 0xead5;
-
-
-// React event targets
+var DiscreteEvent = 0;
+var UserBlockingEvent = 1;
 
 var targetEventTypes = ['pointerdown'];
-var rootEventTypes = ['pointerup', 'pointercancel', { name: 'pointermove', passive: false }];
+var rootEventTypes = ['pointerup', 'pointercancel', 'pointermove_active'];
 
 // In the case we don't have PointerEvents (Safari), we listen to touch events
 // too
 if (typeof window !== 'undefined' && window.PointerEvent === undefined) {
   targetEventTypes.push('touchstart', 'mousedown');
-  rootEventTypes.push('mouseup', 'mousemove', 'touchend', 'touchcancel', {
-    name: 'touchmove',
-    passive: false
-  });
+  rootEventTypes.push('mouseup', 'mousemove', 'touchend', 'touchcancel', 'touchmove_active');
 }
 
-function createDragEvent(type, target, eventData) {
+function createDragEvent(context, type, target, eventData) {
   return objectAssign({
     target: target,
-    type: type
+    type: type,
+    timeStamp: context.getTimeStamp()
   }, eventData);
 }
 
-function dispatchDragEvent(context, name, listener, state, discrete, eventData) {
-  var target = state.dragTarget;
-  var syntheticEvent = createDragEvent(name, target, eventData);
-  context.dispatchEvent(syntheticEvent, listener, { discrete: discrete });
+function isFunction(obj) {
+  return typeof obj === 'function';
 }
 
-var DragResponder = {
+function dispatchDragEvent(context, listener, name, state, eventPriority, eventData) {
+  var target = state.dragTarget;
+  var syntheticEvent = createDragEvent(context, name, target, eventData);
+  context.dispatchEvent(syntheticEvent, listener, eventPriority);
+}
+
+var dragResponderImpl = {
   targetEventTypes: targetEventTypes,
-  createInitialState: function () {
+  getInitialState: function () {
     return {
       dragTarget: null,
       isPointerDown: false,
@@ -167,13 +152,10 @@ var DragResponder = {
       y: 0
     };
   },
-
-  stopLocalPropagation: true,
   onEvent: function (event, context, props, state) {
     var target = event.target,
         type = event.type,
         nativeEvent = event.nativeEvent;
-
 
     switch (type) {
       case 'touchstart':
@@ -181,23 +163,22 @@ var DragResponder = {
       case 'pointerdown':
         {
           if (!state.isDragging) {
-            if (props.onShouldClaimOwnership) {
-              context.releaseOwnership();
-            }
             var obj = type === 'touchstart' ? nativeEvent.changedTouches[0] : nativeEvent;
-            var _x = state.startX = obj.screenX;
-            var _y = state.startY = obj.screenY;
-            state.x = _x;
-            state.y = _y;
+            var x = state.startX = obj.screenX;
+            var y = state.startY = obj.screenY;
+            state.x = x;
+            state.y = y;
             state.dragTarget = target;
             state.isPointerDown = true;
+            var onDragStart = props.onDragStart;
 
-            if (props.onDragStart) {
-              dispatchDragEvent(context, 'dragstart', props.onDragStart, state, true);
+            if (isFunction(onDragStart)) {
+              dispatchDragEvent(context, onDragStart, 'dragstart', state, DiscreteEvent);
             }
 
-            context.addRootEventTypes(target.ownerDocument, rootEventTypes);
+            context.addRootEventTypes(rootEventTypes);
           }
+
           break;
         }
     }
@@ -205,7 +186,6 @@ var DragResponder = {
   onRootEvent: function (event, context, props, state) {
     var type = event.type,
         nativeEvent = event.nativeEvent;
-
 
     switch (type) {
       case 'touchmove':
@@ -215,44 +195,43 @@ var DragResponder = {
           if (event.passive) {
             return;
           }
+
           if (state.isPointerDown) {
             var obj = type === 'touchmove' ? nativeEvent.changedTouches[0] : nativeEvent;
-            var _x2 = obj.screenX;
-            var _y2 = obj.screenY;
-            state.x = _x2;
-            state.y = _y2;
-            if (!state.isDragging && _x2 !== state.startX && _y2 !== state.startY) {
-              var shouldEnableDragging = true;
+            var x = obj.screenX;
+            var y = obj.screenY;
+            state.x = x;
+            state.y = y;
 
-              if (props.onShouldClaimOwnership && props.onShouldClaimOwnership()) {
-                shouldEnableDragging = context.requestOwnership();
-              }
-              if (shouldEnableDragging) {
-                state.isDragging = true;
-                if (props.onDragChange) {
-                  var dragChangeEventListener = function () {
-                    props.onDragChange(true);
-                  };
-                  dispatchDragEvent(context, 'dragchange', dragChangeEventListener, state, true);
-                }
-              } else {
-                state.dragTarget = null;
-                state.isPointerDown = false;
-                context.removeRootEventTypes(rootEventTypes);
+            if (x === state.startX && y === state.startY) {
+              return;
+            }
+
+            if (!state.isDragging) {
+              state.isDragging = true;
+              var onDragChange = props.onDragChange;
+
+              if (isFunction(onDragChange)) {
+                context.dispatchEvent(true, onDragChange, UserBlockingEvent);
               }
             } else {
-              if (props.onDragMove) {
+              var onDragMove = props.onDragMove;
+
+              if (isFunction(onDragMove)) {
                 var eventData = {
-                  diffX: _x2 - state.startX,
-                  diffY: _y2 - state.startY
+                  diffX: x - state.startX,
+                  diffY: y - state.startY
                 };
-                dispatchDragEvent(context, 'dragmove', props.onDragMove, state, false, eventData);
+                dispatchDragEvent(context, onDragMove, 'dragmove', state, UserBlockingEvent, eventData);
               }
+
               nativeEvent.preventDefault();
             }
           }
+
           break;
         }
+
       case 'pointercancel':
       case 'touchcancel':
       case 'touchend':
@@ -260,45 +239,43 @@ var DragResponder = {
       case 'pointerup':
         {
           if (state.isDragging) {
-            if (props.onShouldClaimOwnership) {
-              context.releaseOwnership();
+            var onDragEnd = props.onDragEnd;
+
+            if (isFunction(onDragEnd)) {
+              dispatchDragEvent(context, onDragEnd, 'dragend', state, DiscreteEvent);
             }
-            if (props.onDragEnd) {
-              dispatchDragEvent(context, 'dragend', props.onDragEnd, state, true);
+
+            var _onDragChange = props.onDragChange;
+
+            if (isFunction(_onDragChange)) {
+              context.dispatchEvent(false, _onDragChange, UserBlockingEvent);
             }
-            if (props.onDragChange) {
-              var _dragChangeEventListener = function () {
-                props.onDragChange(false);
-              };
-              dispatchDragEvent(context, 'dragchange', _dragChangeEventListener, state, true);
-            }
+
             state.isDragging = false;
           }
+
           if (state.isPointerDown) {
             state.dragTarget = null;
             state.isPointerDown = false;
             context.removeRootEventTypes(rootEventTypes);
           }
+
           break;
         }
     }
   }
 };
+var DragResponder = React.unstable_createResponder('Drag', dragResponderImpl);
+function useDrag(props) {
+  return React.unstable_useResponder(DragResponder, props);
+}
 
-var Drag = {
-  $$typeof: REACT_EVENT_COMPONENT_TYPE,
-  displayName: 'Drag',
-  props: null,
-  responder: DragResponder
-};
-
-var Drag$1 = Object.freeze({
-	default: Drag
+var Drag = Object.freeze({
+	DragResponder: DragResponder,
+	useDrag: useDrag
 });
 
-var Drag$2 = ( Drag$1 && Drag ) || Drag$1;
-
-var drag = Drag$2.default || Drag$2;
+var drag = Drag;
 
 module.exports = drag;
   })();

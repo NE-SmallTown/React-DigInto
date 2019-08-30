@@ -108,16 +108,14 @@ var objectAssign = shouldUseNative() ? Object.assign : function (target, source)
 	return to;
 };
 
-// Do not require this module directly! Use a normal error constructor with
+// Do not require this module directly! Use normal `invariant` calls with
 // template literal strings. The messages will be converted to ReactError during
 // build, and in production they will be minified.
 
-// Do not require this module directly! Use a normal error constructor with
+// Do not require this module directly! Use normal `invariant` calls with
 // template literal strings. The messages will be converted to ReactError during
 // build, and in production they will be minified.
-
-function ReactError(message) {
-  var error = new Error(message);
+function ReactError(error) {
   error.name = 'Invariant Violation';
   return error;
 }
@@ -125,24 +123,14 @@ function ReactError(message) {
 // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 // nor polyfill, then a plain number is used for performance.
 var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-
 var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
 
 var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
 
 
 
-
-
-
-
-
-
-
-
-
-
-// React event targets
+ // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+// (unstable) APIs that have been removed. Can we remove the symbols?
 
 /**
  * Use invariant() to assert state which your program assumes to be true.
@@ -170,16 +158,20 @@ function captureAssertion(fn) {
       }
     };
   }
-  return { pass: true };
+
+  return {
+    pass: true
+  };
 }
 
 function assertYieldsWereCleared(root) {
   var Scheduler = root._Scheduler;
   var actualYields = Scheduler.unstable_clearYields();
+
   (function () {
     if (!(actualYields.length === 0)) {
       {
-        throw ReactError('Log of yielded values is not empty. Call expect(ReactTestRenderer).unstable_toHaveYielded(...) first.');
+        throw ReactError(Error("Log of yielded values is not empty. Call expect(ReactTestRenderer).unstable_toHaveYielded(...) first."));
       }
     }
   })();
@@ -188,8 +180,8 @@ function assertYieldsWereCleared(root) {
 function unstable_toMatchRenderedOutput(root, expectedJSX) {
   assertYieldsWereCleared(root);
   var actualJSON = root.toJSON();
+  var actualJSX;
 
-  var actualJSX = void 0;
   if (actualJSON === null || typeof actualJSON === 'string') {
     actualJSX = actualJSON;
   } else if (Array.isArray(actualJSON)) {
@@ -199,6 +191,7 @@ function unstable_toMatchRenderedOutput(root, expectedJSX) {
       actualJSX = jsonChildToJSXChild(actualJSON[0]);
     } else {
       var actualJSXChildren = jsonChildrenToJSXChildren(actualJSON);
+
       if (actualJSXChildren === null || typeof actualJSXChildren === 'string') {
         actualJSX = actualJSXChildren;
       } else {
@@ -234,7 +227,9 @@ function jsonChildToJSXChild(jsonChild) {
       type: jsonChild.type,
       key: null,
       ref: null,
-      props: jsxChildren === null ? jsonChild.props : objectAssign({}, jsonChild.props, { children: jsxChildren }),
+      props: jsxChildren === null ? jsonChild.props : objectAssign({}, jsonChild.props, {
+        children: jsxChildren
+      }),
       _owner: null,
       _store: {}
     };
@@ -249,9 +244,11 @@ function jsonChildrenToJSXChildren(jsonChildren) {
       var jsxChildren = [];
       var allJSXChildrenAreStrings = true;
       var jsxChildrenString = '';
+
       for (var i = 0; i < jsonChildren.length; i++) {
         var jsxChild = jsonChildToJSXChild(jsonChildren[i]);
         jsxChildren.push(jsxChild);
+
         if (allJSXChildrenAreStrings) {
           if (typeof jsxChild === 'string') {
             jsxChildrenString += jsxChild;
@@ -260,9 +257,11 @@ function jsonChildrenToJSXChildren(jsonChildren) {
           }
         }
       }
+
       return allJSXChildrenAreStrings ? jsxChildrenString : jsxChildren;
     }
   }
+
   return null;
 }
 

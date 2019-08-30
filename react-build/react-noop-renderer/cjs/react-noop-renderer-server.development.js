@@ -23,7 +23,6 @@ var ReactFizzStreamer = require('react-stream');
  * and for testing semantics of reconciliation separate from the host
  * environment.
  */
-
 var ReactNoopServer = ReactFizzStreamer({
   scheduleWork: function (callback) {
     callback();
@@ -39,7 +38,10 @@ var ReactNoopServer = ReactFizzStreamer({
     return Buffer.from(content, 'utf8');
   },
   formatChunk: function (type, props) {
-    return Buffer.from(JSON.stringify({ type: type, props: props }), 'utf8');
+    return Buffer.from(JSON.stringify({
+      type: type,
+      props: props
+    }), 'utf8');
   }
 });
 
@@ -62,6 +64,8 @@ var ReactNoopServer$3 = ( ReactNoopServer$2 && ReactNoopServer$1 ) || ReactNoopS
 
 // TODO: decide on the top-level export form.
 // This is hacky but makes it work with both Rollup and Jest.
+
+
 var server = ReactNoopServer$3.default || ReactNoopServer$3;
 
 module.exports = server;

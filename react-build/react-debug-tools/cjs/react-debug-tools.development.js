@@ -109,22 +109,30 @@ var objectAssign = shouldUseNative() ? Object.assign : function (target, source)
 	return to;
 };
 
-var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
-
-// Prevent newer renderers from RTE when used with older react package versions.
+var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED; // Prevent newer renderers from RTE when used with older react package versions.
 // Current owner and dispatcher used to share the same ref,
 // but PR #14548 split them out to better support the react-debug-tools package.
+
 if (!ReactSharedInternals.hasOwnProperty('ReactCurrentDispatcher')) {
   ReactSharedInternals.ReactCurrentDispatcher = {
     current: null
   };
 }
 
+if (!ReactSharedInternals.hasOwnProperty('ReactCurrentBatchConfig')) {
+  ReactSharedInternals.ReactCurrentBatchConfig = {
+    suspense: null
+  };
+}
+
 var FunctionComponent = 0;
 
  // Before we know whether it is function or class
+
  // Root of a host tree. Could be nested inside another node.
+
  // A subtree. Could be an entry point to a different renderer.
+
 
 
 
@@ -137,11 +145,7 @@ var ForwardRef = 11;
 
 var SimpleMemoComponent = 15;
 
-// Used to track hooks called during a render
-
-var hookLog = [];
-
-// Primitives
+var hookLog = []; // Primitives
 
 var primitiveStackCache = null;
 
@@ -150,10 +154,13 @@ function getPrimitiveStackCache() {
   // most stack frames added by calling the primitive hook can be removed.
   if (primitiveStackCache === null) {
     var cache = new Map();
-    var readHookLog = void 0;
+    var readHookLog;
+
     try {
       // Use all hooks here to add them to the hook log.
-      Dispatcher.useContext({ _currentValue: null });
+      Dispatcher.useContext({
+        _currentValue: null
+      });
       Dispatcher.useState(null);
       Dispatcher.useReducer(function (s, a) {
         return s;
@@ -173,21 +180,27 @@ function getPrimitiveStackCache() {
       readHookLog = hookLog;
       hookLog = [];
     }
+
     for (var i = 0; i < readHookLog.length; i++) {
       var hook = readHookLog[i];
       cache.set(hook.primitive, ErrorStackParser.parse(hook.stackError));
     }
+
     primitiveStackCache = cache;
   }
+
   return primitiveStackCache;
 }
 
 var currentHook = null;
+
 function nextHook() {
   var hook = currentHook;
+
   if (hook !== null) {
     currentHook = hook.next;
   }
+
   return hook;
 }
 
@@ -208,18 +221,24 @@ function useContext(context, observedBits) {
 function useState(initialState) {
   var hook = nextHook();
   var state = hook !== null ? hook.memoizedState : typeof initialState === 'function' ? initialState() : initialState;
-  hookLog.push({ primitive: 'State', stackError: new Error(), value: state });
+  hookLog.push({
+    primitive: 'State',
+    stackError: new Error(),
+    value: state
+  });
   return [state, function (action) {}];
 }
 
 function useReducer(reducer, initialArg, init) {
   var hook = nextHook();
-  var state = void 0;
+  var state;
+
   if (hook !== null) {
     state = hook.memoizedState;
   } else {
     state = init !== undefined ? init(initialArg) : initialArg;
   }
+
   hookLog.push({
     primitive: 'Reducer',
     stackError: new Error(),
@@ -230,7 +249,9 @@ function useReducer(reducer, initialArg, init) {
 
 function useRef(initialValue) {
   var hook = nextHook();
-  var ref = hook !== null ? hook.memoizedState : { current: initialValue };
+  var ref = hook !== null ? hook.memoizedState : {
+    current: initialValue
+  };
   hookLog.push({
     primitive: 'Ref',
     stackError: new Error(),
@@ -250,19 +271,25 @@ function useLayoutEffect(create, inputs) {
 
 function useEffect(create, inputs) {
   nextHook();
-  hookLog.push({ primitive: 'Effect', stackError: new Error(), value: create });
+  hookLog.push({
+    primitive: 'Effect',
+    stackError: new Error(),
+    value: create
+  });
 }
 
 function useImperativeHandle(ref, create, inputs) {
-  nextHook();
-  // We don't actually store the instance anywhere if there is no ref callback
+  nextHook(); // We don't actually store the instance anywhere if there is no ref callback
   // and if there is a ref callback it might not store it but if it does we
   // have no way of knowing where. So let's only enable introspection of the
   // ref itself if it is using the object form.
+
   var instance = undefined;
+
   if (ref !== null && typeof ref === 'object') {
     instance = ref.current;
   }
+
   hookLog.push({
     primitive: 'ImperativeHandle',
     stackError: new Error(),
@@ -291,8 +318,29 @@ function useCallback(callback, inputs) {
 function useMemo(nextCreate, inputs) {
   var hook = nextHook();
   var value = hook !== null ? hook.memoizedState[0] : nextCreate();
-  hookLog.push({ primitive: 'Memo', stackError: new Error(), value: value });
+  hookLog.push({
+    primitive: 'Memo',
+    stackError: new Error(),
+    value: value
+  });
   return value;
+}
+
+function useResponder(responder, listenerProps) {
+  // Don't put the actual event responder object in, just its displayName
+  var value = {
+    responder: responder.displayName || 'EventResponder',
+    props: listenerProps
+  };
+  hookLog.push({
+    primitive: 'Responder',
+    stackError: new Error(),
+    value: value
+  });
+  return {
+    responder: responder,
+    props: listenerProps
+  };
 }
 
 var Dispatcher = {
@@ -306,10 +354,9 @@ var Dispatcher = {
   useMemo: useMemo,
   useReducer: useReducer,
   useRef: useRef,
-  useState: useState
-};
-
-// Inspect
+  useState: useState,
+  useResponder: useResponder
+}; // Inspect
 
 // Don't assume
 //
@@ -324,11 +371,11 @@ var Dispatcher = {
 // We also can't assume that the last frame of the root call is the same
 // frame as the last frame of the hook call because long stack traces can be
 // truncated to a stack trace limit.
-
 var mostLikelyAncestorIndex = 0;
 
 function findSharedIndex(hookStack, rootStack, rootIndex) {
   var source = rootStack[rootIndex].source;
+
   hookSearch: for (var i = 0; i < hookStack.length; i++) {
     if (hookStack[i].source === source) {
       // This looks like a match. Validate that the rest of both stack match up.
@@ -338,26 +385,32 @@ function findSharedIndex(hookStack, rootStack, rootIndex) {
           continue hookSearch;
         }
       }
+
       return i;
     }
   }
+
   return -1;
 }
 
 function findCommonAncestorIndex(rootStack, hookStack) {
   var rootIndex = findSharedIndex(hookStack, rootStack, mostLikelyAncestorIndex);
+
   if (rootIndex !== -1) {
     return rootIndex;
-  }
-  // If the most likely one wasn't a hit, try any other frame to see if it is shared.
+  } // If the most likely one wasn't a hit, try any other frame to see if it is shared.
   // If that takes more than 5 frames, something probably went wrong.
+
+
   for (var i = 0; i < rootStack.length && i < 5; i++) {
     rootIndex = findSharedIndex(hookStack, rootStack, i);
+
     if (rootIndex !== -1) {
       mostLikelyAncestorIndex = i;
       return rootIndex;
     }
   }
+
   return -1;
 }
 
@@ -365,19 +418,24 @@ function isReactWrapper(functionName, primitiveName) {
   if (!functionName) {
     return false;
   }
+
   var expectedPrimitiveName = 'use' + primitiveName;
+
   if (functionName.length < expectedPrimitiveName.length) {
     return false;
   }
+
   return functionName.lastIndexOf(expectedPrimitiveName) === functionName.length - expectedPrimitiveName.length;
 }
 
 function findPrimitiveIndex(hookStack, hook) {
   var stackCache = getPrimitiveStackCache();
   var primitiveStack = stackCache.get(hook.primitive);
+
   if (primitiveStack === undefined) {
     return -1;
   }
+
   for (var i = 0; i < primitiveStack.length && i < hookStack.length; i++) {
     if (primitiveStack[i].source !== hookStack[i].source) {
       // If the next two frames are functions called `useX` then we assume that they're part of the
@@ -385,12 +443,15 @@ function findPrimitiveIndex(hookStack, hook) {
       if (i < hookStack.length - 1 && isReactWrapper(hookStack[i].functionName, hook.primitive)) {
         i++;
       }
+
       if (i < hookStack.length - 1 && isReactWrapper(hookStack[i].functionName, hook.primitive)) {
         i++;
       }
+
       return i;
     }
   }
+
   return -1;
 }
 
@@ -400,10 +461,12 @@ function parseTrimmedStack(rootStack, hook) {
   var hookStack = ErrorStackParser.parse(hook.stackError);
   var rootIndex = findCommonAncestorIndex(rootStack, hookStack);
   var primitiveIndex = findPrimitiveIndex(hookStack, hook);
+
   if (rootIndex === -1 || primitiveIndex === -1 || rootIndex - primitiveIndex < 2) {
     // Something went wrong. Give up.
     return null;
   }
+
   return hookStack.slice(primitiveIndex, rootIndex - 1);
 }
 
@@ -411,13 +474,17 @@ function parseCustomHookName(functionName) {
   if (!functionName) {
     return '';
   }
+
   var startIndex = functionName.lastIndexOf('.');
+
   if (startIndex === -1) {
     startIndex = 0;
   }
+
   if (functionName.substr(startIndex, 3) === 'use') {
     startIndex += 3;
   }
+
   return functionName.substr(startIndex);
 }
 
@@ -427,32 +494,39 @@ function buildTree(rootStack, readHookLog) {
   var levelChildren = rootChildren;
   var nativeHookID = 0;
   var stackOfChildren = [];
+
   for (var i = 0; i < readHookLog.length; i++) {
     var hook = readHookLog[i];
     var stack = parseTrimmedStack(rootStack, hook);
+
     if (stack !== null) {
       // Note: The indices 0 <= n < length-1 will contain the names.
       // The indices 1 <= n < length will contain the source locations.
       // That's why we get the name from n - 1 and don't check the source
       // of index 0.
       var commonSteps = 0;
+
       if (prevStack !== null) {
         // Compare the current level's stack to the new stack.
         while (commonSteps < stack.length && commonSteps < prevStack.length) {
           var stackSource = stack[stack.length - commonSteps - 1].source;
           var prevSource = prevStack[prevStack.length - commonSteps - 1].source;
+
           if (stackSource !== prevSource) {
             break;
           }
+
           commonSteps++;
-        }
-        // Pop back the stack as many steps as were not common.
+        } // Pop back the stack as many steps as were not common.
+
+
         for (var j = prevStack.length - 1; j > commonSteps; j--) {
           levelChildren = stackOfChildren.pop();
         }
-      }
-      // The remaining part of the new stack are custom hooks. Push them
+      } // The remaining part of the new stack are custom hooks. Push them
       // to the tree.
+
+
       for (var _j = stack.length - commonSteps - 1; _j >= 1; _j--) {
         var children = [];
         levelChildren.push({
@@ -465,43 +539,41 @@ function buildTree(rootStack, readHookLog) {
         stackOfChildren.push(levelChildren);
         levelChildren = children;
       }
+
       prevStack = stack;
     }
-    var _primitive = hook.primitive;
 
-    // For now, the "id" of stateful hooks is just the stateful hook index.
+    var primitive = hook.primitive; // For now, the "id" of stateful hooks is just the stateful hook index.
     // Custom hooks have no ids, nor do non-stateful native hooks (e.g. Context, DebugValue).
 
-    var _id = _primitive === 'Context' || _primitive === 'DebugValue' ? null : nativeHookID++;
+    var id = primitive === 'Context' || primitive === 'DebugValue' ? null : nativeHookID++; // For the time being, only State and Reducer hooks support runtime overrides.
 
-    // For the time being, only State and Reducer hooks support runtime overrides.
-    var _isStateEditable = _primitive === 'Reducer' || _primitive === 'State';
-
+    var isStateEditable = primitive === 'Reducer' || primitive === 'State';
     levelChildren.push({
-      id: _id,
-      isStateEditable: _isStateEditable,
-      name: _primitive,
+      id: id,
+      isStateEditable: isStateEditable,
+      name: primitive,
       value: hook.value,
       subHooks: []
     });
-  }
+  } // Associate custom hook values (useDebugValue() hook entries) with the correct hooks.
 
-  // Associate custom hook values (useDebugValue() hook entries) with the correct hooks.
+
   processDebugValues(rootChildren, null);
-
   return rootChildren;
-}
-
-// Custom hooks support user-configurable labels (via the special useDebugValue() hook).
+} // Custom hooks support user-configurable labels (via the special useDebugValue() hook).
 // That hook adds user-provided values to the hooks tree,
 // but these values aren't intended to appear alongside of the other hooks.
 // Instead they should be attributed to their parent custom hook.
 // This method walks the tree and assigns debug values to their custom hook owners.
+
+
 function processDebugValues(hooksTree, parentHooksNode) {
   var debugValueHooksNodes = [];
 
   for (var i = 0; i < hooksTree.length; i++) {
     var hooksNode = hooksTree[i];
+
     if (hooksNode.name === 'DebugValue' && hooksNode.subHooks.length === 0) {
       hooksTree.splice(i, 1);
       i--;
@@ -509,11 +581,11 @@ function processDebugValues(hooksTree, parentHooksNode) {
     } else {
       processDebugValues(hooksNode.subHooks, hooksNode);
     }
-  }
-
-  // Bubble debug value labels to their custom hook owner.
+  } // Bubble debug value labels to their custom hook owner.
   // If there is no parent hook, just ignore them for now.
   // (We may warn about this in the future.)
+
+
   if (parentHooksNode !== null) {
     if (debugValueHooksNodes.length === 1) {
       parentHooksNode.value = debugValueHooksNodes[0].value;
@@ -534,9 +606,10 @@ function inspectHooks(renderFunction, props, currentDispatcher) {
   }
 
   var previousDispatcher = currentDispatcher.current;
-  var readHookLog = void 0;
+  var readHookLog;
   currentDispatcher.current = Dispatcher;
-  var ancestorStackError = void 0;
+  var ancestorStackError;
+
   try {
     ancestorStackError = new Error();
     renderFunction(props);
@@ -545,23 +618,27 @@ function inspectHooks(renderFunction, props, currentDispatcher) {
     hookLog = [];
     currentDispatcher.current = previousDispatcher;
   }
+
   var rootStack = ErrorStackParser.parse(ancestorStackError);
   return buildTree(rootStack, readHookLog);
 }
 
 function setupContexts(contextMap, fiber) {
   var current = fiber;
+
   while (current) {
     if (current.tag === ContextProvider) {
       var providerType = current.type;
       var context = providerType._context;
+
       if (!contextMap.has(context)) {
         // Store the current value that we're going to restore later.
-        contextMap.set(context, context._currentValue);
-        // Set the inner most provider value on the context.
+        contextMap.set(context, context._currentValue); // Set the inner most provider value on the context.
+
         context._currentValue = current.memoizedProps.value;
       }
     }
+
     current = current.return;
   }
 }
@@ -574,9 +651,10 @@ function restoreContexts(contextMap) {
 
 function inspectHooksOfForwardRef(renderFunction, props, ref, currentDispatcher) {
   var previousDispatcher = currentDispatcher.current;
-  var readHookLog = void 0;
+  var readHookLog;
   currentDispatcher.current = Dispatcher;
-  var ancestorStackError = void 0;
+  var ancestorStackError;
+
   try {
     ancestorStackError = new Error();
     renderFunction(props, ref);
@@ -585,6 +663,7 @@ function inspectHooksOfForwardRef(renderFunction, props, ref, currentDispatcher)
     hookLog = [];
     currentDispatcher.current = previousDispatcher;
   }
+
   var rootStack = ErrorStackParser.parse(ancestorStackError);
   return buildTree(rootStack, readHookLog);
 }
@@ -593,14 +672,18 @@ function resolveDefaultProps(Component, baseProps) {
   if (Component && Component.defaultProps) {
     // Resolve default props. Taken from ReactElement
     var props = objectAssign({}, baseProps);
+
     var defaultProps = Component.defaultProps;
+
     for (var propName in defaultProps) {
       if (props[propName] === undefined) {
         props[propName] = defaultProps[propName];
       }
     }
+
     return props;
   }
+
   return baseProps;
 }
 
@@ -613,23 +696,29 @@ function inspectHooksOfFiber(fiber, currentDispatcher) {
 
   if (fiber.tag !== FunctionComponent && fiber.tag !== SimpleMemoComponent && fiber.tag !== ForwardRef) {
     throw new Error('Unknown Fiber. Needs to be a function component to inspect hooks.');
-  }
-  // Warm up the cache so that it doesn't consume the currentHook.
+  } // Warm up the cache so that it doesn't consume the currentHook.
+
+
   getPrimitiveStackCache();
   var type = fiber.type;
   var props = fiber.memoizedProps;
+
   if (type !== fiber.elementType) {
     props = resolveDefaultProps(type, props);
-  }
-  // Set up the current hook so that we can step through and read the
+  } // Set up the current hook so that we can step through and read the
   // current state from them.
+
+
   currentHook = fiber.memoizedState;
   var contextMap = new Map();
+
   try {
     setupContexts(contextMap, fiber);
+
     if (fiber.tag === ForwardRef) {
       return inspectHooksOfForwardRef(type.render, props, fiber.ref, currentDispatcher);
     }
+
     return inspectHooks(type, props, currentDispatcher);
   } finally {
     currentHook = null;
@@ -645,6 +734,8 @@ var ReactDebugTools = Object.freeze({
 });
 
 // This is hacky but makes it work with both Rollup and Jest.
+
+
 var reactDebugTools = ReactDebugTools.default || ReactDebugTools;
 
 module.exports = reactDebugTools;
