@@ -23267,6 +23267,7 @@ function renderRoot(root, expirationTime, isSync) {
         // this root. We should render all the expired work in a
         // single batch.
         var currentTime = requestCurrentTime();
+        console.log('currentTime: ' + performance.now());
 
         if (currentTime < expirationTime) {
           // Restart at the current time.
@@ -23278,7 +23279,10 @@ function renderRoot(root, expirationTime, isSync) {
             __interactionsRef.current = prevInteractions;
           }
 
+          console.log('expirationTime: ' + performance.now());
           return renderRoot.bind(null, root, currentTime);
+        } else {
+          debugger;
         }
       }
     } else {

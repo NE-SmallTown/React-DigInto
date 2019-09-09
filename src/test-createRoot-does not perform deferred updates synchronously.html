@@ -1,0 +1,92 @@
+<head>
+<!--    <script src="https://unpkg.com/@babel/standalone@7.5.5/babel.min.js"></script>-->
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<!--  <script type="text/babel"> -->
+<script>
+  const container = document.getElementById('container');
+
+  // let instance;
+  // class Component extends React.Component {
+  //   state = {step: 0};
+  //   render() {
+  //     instance = this;
+  //     return React.createElement('div', null, this.state.step);
+  //   }
+  // }
+  // debugger;
+  // const root = ReactDOM.unstable_createRoot(document.getElementById('container'));
+  // root.render(React.createElement(Component, null, null));
+  // ReactDOM.render(React.createElement(Component, null, null), document.getElementById('container'));
+  //   setTimeout(() => {
+  //     debugger;
+  //
+  //     instance.setState({ step: 2 });
+  //
+  //     debugger;
+  //   }, 100);
+
+
+  let inputRef = React.createRef();
+  let asyncValueRef = React.createRef();
+  let syncValueRef = React.createRef();
+  class Counter extends React.Component {
+    state = {asyncValue: '', syncValue: ''};
+
+    handleChange = e => {
+      const nextValue = e.target.value;
+
+      setTimeout(() => {
+        this.setState({
+          asyncValue: nextValue,
+        });
+
+        // It should not be flushed yet.
+        console.log('asyncValueRef.current.textContent:' + asyncValueRef.current.textContent);
+      }, 100);
+
+      this.setState({
+        syncValue: nextValue,
+      });
+
+      // let r = +new Date;
+      // while (+new Date - r < 100) {}
+    };
+
+    render() {
+      return React.createElement(
+        "div",
+        null,
+        React.createElement("input", {
+          ref: inputRef,
+          onChange: this.handleChange,
+          defaultValue: ""
+        }),
+        React.createElement(
+          "p",
+          {
+            ref: asyncValueRef
+          },
+          this.state.asyncValue
+        ),
+        React.createElement(
+          "p",
+          {
+            ref: syncValueRef
+          },
+          this.state.syncValue
+        )
+      );
+    }
+  }
+
+  // const root = ReactDOM.unstable_createRoot(container);
+  // root.render(React.createElement(Counter, null));
+  ReactDOM.render(React.createElement(Counter, null, null), document.getElementById('container'));
+</script>

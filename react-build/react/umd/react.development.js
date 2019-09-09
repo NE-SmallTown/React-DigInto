@@ -2552,6 +2552,8 @@ typeof MessageChannel !== 'function') {
   channel.port1.onmessage = performWorkUntilDeadline;
 
   var onAnimationFrame = function (rAFTime) {
+    console.log('onAnimationFrame!!!!: ' + rAFTimeoutID);
+
     if (scheduledHostCallback === null) {
       // No scheduled work. Exit.
       prevRAFTime = -1;
@@ -2570,6 +2572,7 @@ typeof MessageChannel !== 'function') {
 
     isRAFLoopRunning = true;
     requestAnimationFrame(function (nextRAFTime) {
+      console.log('_clearTimeout: ' + rAFTimeoutID);
       _clearTimeout(rAFTimeoutID);
 
       onAnimationFrame(nextRAFTime);
@@ -2578,6 +2581,7 @@ typeof MessageChannel !== 'function') {
     // TODO: Need a better heuristic for backgrounded work.
 
     var onTimeout = function () {
+      console.log('onTimeout:' + rAFTimeoutID);
       frameDeadline = getCurrentTime() + frameLength / 2;
       performWorkUntilDeadline();
       rAFTimeoutID = _setTimeout(onTimeout, frameLength * 3);

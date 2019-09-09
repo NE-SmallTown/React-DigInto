@@ -1,0 +1,53 @@
+<head>
+<!--    <script src="https://unpkg.com/@babel/standalone@7.5.5/babel.min.js"></script>-->
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<!--  <script type="text/babel"> -->
+<script>
+  const container = document.getElementById('container');
+
+  class Component extends React.Component {
+    state = { text: '' };
+
+    componentDidMount() {
+      setTimeout(() => {
+        this.setState(state => ({ text: state.text + 'A' }));
+        console.log('setTimeout(componentDidMount):' + container.innerHTML);
+
+        document.getElementById('span').click(); // 模拟 flushSync，但是貌似并无法模拟？因为 click 调用完之后，afterClick 没有输出 BC
+
+        console.log('afterClick:' + container.innerHTML);
+
+        this.setState(state => ({ text: state.text + 'D' }));
+        console.log('finalSetState:' + container.innerHTML);
+      }, 2000);
+    }
+
+    handleClick = () => {
+      this.setState(state => ({ text: state.text + 'B' }));
+      this.setState(state => ({ text: state.text + 'C' }));
+
+      console.log('handleClick:' + container.innerHTML);
+    };
+
+    render() {
+      return React.createElement(
+        'span',
+        {
+            id: 'span',
+            onClick: this.handleClick,
+        },
+        this.state.text
+      )
+    }
+  }
+
+  const root = ReactDOM.unstable_createRoot(container);
+  root.render(React.createElement(Component, null));
+</script>
