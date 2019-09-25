@@ -1,0 +1,47 @@
+<head>
+<!--    <script src="https://unpkg.com/@babel/standalone@7.5.5/babel.min.js"></script>-->
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<!--  <script type="text/babel"> -->
+<script>
+  const container = document.getElementById('container');
+
+  function Baz() {
+    return React.createElement('p', null, 'baz');
+  }
+
+  let setCounter;
+  function Bar() {
+    debugger;
+    const [counter, _setCounter] = React.useState(0);
+    setCounter = _setCounter;
+    return React.createElement('p', null, `bar ${counter}`);
+  }
+
+  function Foo() {
+    return (
+      React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "div",
+          {
+            hidden: true
+          },
+          React.createElement(Bar, null)
+        ),
+        React.createElement(Baz, null)
+      )
+    );
+  }
+
+  const root = ReactDOM.unstable_createRoot(container);
+  debugger;
+  root.render(React.createElement(Foo, null));
+</script>

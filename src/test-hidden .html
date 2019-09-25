@@ -1,0 +1,89 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+<div id="container"></div>
+</body>
+
+<script>
+  class Bar extends React.Component {
+    shouldComponentUpdate(nextProps) {
+      return this.props.children !== nextProps.children;
+    }
+
+    render() {
+      console.log('Bar');
+      return React.createElement("span", {
+        prop: this.props.children
+      });
+    }
+  }
+
+  class Content extends React.Component {
+    shouldComponentUpdate(nextProps) {
+      return this.props.step !== nextProps.step;
+    }
+
+    render() {
+      console.log('Content');
+
+      return (
+        React.createElement(
+          "div",
+          null,
+          React.createElement(
+            Bar,
+            null,
+            this.props.step === 0 ? 'Hi' : 'Hello'),
+            React.createElement(
+              Bar,
+              null,
+              this.props.step === 0 ? this.props.text : 'World'
+            )
+        )
+      );
+    }
+  }
+
+  function Foo(props) {
+    console.log('Foo');
+
+    return (
+      React.createElement(
+        "div",
+        {
+          hidden: true
+        },
+        React.createElement(
+          Content,
+          {
+            step: props.step,
+            text: props.text
+          }
+        )
+      )
+    );
+  }
+
+  console.log('1st render');
+  ReactDOM.render(React.createElement(Foo, {
+    text: "foo",
+    step: 0
+  }), document.getElementById('container'));
+
+
+  console.log('2st render');
+  ReactDOM.render(React.createElement(Foo, {
+    text: "bar",
+    step: 1
+  }), document.getElementById('container'));
+
+
+  console.log('3rd render');
+  ReactDOM.render(React.createElement(Foo, {
+    text: "foo",
+    step: 1
+  }), document.getElementById('container'));
+</script>
