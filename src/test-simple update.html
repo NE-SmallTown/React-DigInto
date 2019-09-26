@@ -1,0 +1,34 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<script>
+  class Bar extends React.Component {
+    state = { v: '' };
+
+    handleClick = e => {
+      debugger;
+      this.setState({
+        v: e.target.value,
+      })
+    };
+
+    render () {
+      console.log('bar render');
+
+      return (
+        React.createElement('input', {
+          onChange: this.handleClick,
+          value: this.state.v
+        })
+      );
+    }
+  }
+
+  ReactDOM.render(React.createElement(Bar), document.getElementById('container'));
+</script>
