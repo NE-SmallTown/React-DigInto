@@ -1,0 +1,20 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<script>
+  const { useState } = React;
+
+  function Parent() {
+    const [counter1, setCounter1] = useState(0);
+
+    return React.createElement('div', { onClick: () => { debugger; setCounter1(1) }}, counter1);
+  }
+
+  ReactDOM.render(React.createElement(Parent), document.getElementById('container'));
+</script>
