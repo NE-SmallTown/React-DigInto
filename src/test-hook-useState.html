@@ -11,9 +11,12 @@
   const { useState } = React;
 
   function Parent() {
-    const [counter1, setCounter1] = useState(0);
+    const [counter1, setCounter1] = useState('a1');
+    const [counter2, setCounter2] = useState('b1');
 
-    return React.createElement('div', { onClick: () => { debugger; setCounter1(1) }}, counter1);
+    const text = `${counter1}:${counter2}`;
+
+    return React.createElement('div', { onClick: () => { debugger; setCounter1('a2'); setCounter2('b2') }}, text);
   }
 
   ReactDOM.render(React.createElement(Parent), document.getElementById('container'));
