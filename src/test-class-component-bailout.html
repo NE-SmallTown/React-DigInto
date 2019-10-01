@@ -1,0 +1,83 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<script>
+  function Bar() {
+    console.log('Bar');
+
+    return 'bar!!!!';
+  }
+
+  // function Foo() {
+  //   console.log('Foo');
+  //
+  //   return (
+  //     React.createElement(Bar) // 因为 Foo 重新 render 了，所以 Bar 被重新 createElement 了，props 自然也是新创建的一个空 {} 了，和原来不一样了，所以 Bar 会重新创建
+  //   );
+  // }
+  //
+  // class App extends React.Component {
+  //   state = { q: 3 };
+  //
+  //   componentDidMount() {
+  //     setTimeout(() => {
+  //       debugger;
+  //
+  //       this.setState({ q: 3 });
+  //     }, 2000);
+  //   }
+  //
+  //   render() {
+  //     console.log('App');
+  //
+  //     return (
+  //       React.createElement(Foo, { onClick: () => {} })
+  //     );
+  //   }
+  // }
+
+
+
+
+
+  // 这个和上面的区别就在于能够保证 Foo 的 props 不变（上面的 props 会变）
+  // 因为 React 是先判断 props && context 变没变化，决定对于那个组件要不要 beginWork（进入它的 render），然后再判断 state 决定要不要渲染子节点
+  // 但是仍无法阻止子节点被渲染（state 发生了变化，引用不相等，具体见 test-hook-useState-bailout 的注释）
+  class Foo extends React.Component {
+    state = { q: 3 };
+
+    componentDidMount() {
+      setTimeout(() => {
+        debugger;
+
+        this.setState({ q: 3 });
+      }, 2000);
+    }
+
+    render() {
+      console.log('Foo');
+
+      return (
+        React.createElement(Bar)
+      );
+    }
+  }
+
+  class App extends React.Component {
+    render() {
+      console.log('App');
+
+      return (
+        React.createElement(Foo, { onClick: () => {} })
+      );
+    }
+  }
+
+  ReactDOM.render(React.createElement(App), document.getElementById('container'));
+</script>

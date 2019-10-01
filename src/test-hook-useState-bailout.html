@@ -1,0 +1,50 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<script>
+  const { useState } = React;
+
+  function Child({ text }) {
+    console.log('Child render');
+    return text;
+  }
+
+  function Parent() {
+    console.log('Parent render');
+
+    const [counter1, setCounter1] = useState('a1');
+
+    return React.createElement('div', { onClick: () => {
+      debugger;
+      setCounter1('a2');
+
+      setTimeout(() => {
+        debugger;
+
+        // render & bailout(不进入子节点)，不会走 eager 流程（fiber.expirationTime !== NoWork），所以会去走渲染流程
+        // 由于 Parent 的 props 没有变化（即 oldProps === newProps，因为渲染 Parent 的父级没有重新 render，即 Parent 没有重新被 createElement）
+        // props 没有变化，同时又由于 Parent 的 memoizedState 和进入 Parent 之后跑完所有 hook 之后的 state 是相同的，即 state 也没变化，所有就不用去渲染子节点
+
+        // 这点就和用 class + setState 是有区别的
+        // function + hook/setState 的方式，最后可以检验出 state 没变，而对于 class + setState，即便也是 setState 的相同值
+        // 但**仍会触发**子节点渲染，因为 class 虽然是对 state 进行 merge，但是最后返回的事 Object.assign({}, prevState, newState)
+        // 所以最后比较（`Object.is`）的时候是 `false`
+        // Tip：这里不会走 eager 的深层原因是如果这里也走的话，React 就必须所有的都走 eager 了，因为区分不了这两种情况？？？？
+        setCounter1('a2');
+      }, 2000);
+
+      setTimeout(() => {
+        debugger;
+        setCounter1('a2'); // 直接 bailout，因为会走 eager 流程（fiber.expirationTime === NoWork）
+      }, 5000);
+    }}, React.createElement(Child, { text: counter1 }));
+  }
+
+  ReactDOM.render(React.createElement(Parent), document.getElementById('container'));
+</script>
