@@ -1,0 +1,46 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<script>
+  const {useState, useEffect, useLayoutEffect} = React;
+
+  function Counter() {
+    const [counter, setCounter] = useState(0);
+    // if (counter === 0) {
+    //   setCounter(x => x + 1);
+    //   setCounter(x => x + 1);
+    // }
+    debugger;
+    useEffect(() => {
+      debugger;
+      console.log('useEffect1');
+
+      setCounter(x => x + 1);
+      setCounter(x => x + 1);
+    }, []);
+
+    useEffect(() => {
+      debugger;
+      console.log('useEffect2');
+
+      setCounter(x => x + 1);
+      setCounter(x => x + 1);
+    }, []);
+
+    useLayoutEffect(() => {
+      debugger;
+      console.log('useLayoutEffect');
+      // setCounter(x => x + 2);
+    })
+
+    return counter;
+  }
+
+  ReactDOM.render(React.createElement(Counter), document.getElementById('container'));
+</script>
