@@ -1,0 +1,61 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<script>
+  const {useState, useEffect, useLayoutEffect} = React;
+
+  function Counter() {
+    const [counter, setCounter] = useState(0);
+    console.log('counter: ' + counter);
+
+    useEffect(() => {
+      console.log('useEffect1');
+
+      setCounter(x => x + 1);
+      setCounter(x => x + 1);
+
+      setTimeout(() => {
+        console.log('setTimeout useEffect1');
+
+        setCounter(x => x + 3);
+        console.log('useEffect1 after first setCounter');
+
+        setCounter(x => x + 4);
+        console.log('useEffect1 after second setCounter');
+      }, 100);
+    }, []);
+
+    useEffect(() => {
+      console.log('useEffect2');
+
+      setTimeout(() => {
+        console.log('setTimeout useEffect2');
+
+        setCounter(x => x + 3);
+        console.log('useEffect2 after first setCounter');
+
+        setCounter(x => x + 4);
+        console.log('useEffect2 after second setCounter');
+      }, 100);
+
+      setCounter(x => x + 1);
+      setCounter(x => x + 1);
+    }, []);
+
+    useLayoutEffect(() => {
+      console.log('useLayoutEffect');
+    })
+
+    return counter;
+  }
+
+ //  ReactDOM.render(React.createElement(Counter), document.getElementById('container'));
+  const root = ReactDOM.unstable_createRoot(document.getElementById('container'));
+  root.render(React.createElement(Counter));
+</script>

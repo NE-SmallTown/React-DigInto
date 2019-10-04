@@ -1,0 +1,70 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<script>
+  const { useState, useCallback } = React;
+
+  class IncrementButton extends React.Component {
+    render() {
+      console.log('IncrementButton render');
+
+      return React.createElement('button', { onClick: this.props.increment }, 'Increment');
+    }
+  }
+
+  function Counter({ incrementBy }) {
+    console.log('Counter render');
+
+    const [count, updateCount] = useState(0);
+    const increment = useCallback(
+      () => {
+        debugger;
+
+        updateCount(c => c + incrementBy);
+      },
+      [incrementBy]
+    );
+
+    return (
+      React.createElement(
+        'div',
+        null,
+        React.createElement(
+          IncrementButton,
+          { increment },
+        ),
+        React.createElement(
+          'div',
+          null,
+          'Count: ' + count
+        )
+      )
+    );
+  }
+
+  function App() {
+    const [incrementBy, setIncrementBy] = useState(1);
+
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        Counter,
+        { incrementBy },
+      ),
+      React.createElement(
+        'button',
+        { onClick: () => { debugger; setIncrementBy(10); } },
+        'change incrementBy'
+      )
+    )
+  }
+
+  ReactDOM.render(React.createElement(App), document.getElementById('container'));
+</script>
