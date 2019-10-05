@@ -1,0 +1,24 @@
+<head>
+    <script src="../react-build/react/umd/react.development.js"></script>
+    <script src="../react-build/react-dom/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+
+<script>
+  const { useState, useCallback, useRef } = React;
+
+  function TextInputWithFocusButton() {
+    const inputEl = useRef(null);
+    // const onButtonClick = () => {
+    //   // `current` points to the mounted text input element
+    //   inputEl.current.focus();
+    // };
+
+    return React.createElement('input', { ref: inputEl });
+  }
+
+  ReactDOM.render(React.createElement(TextInputWithFocusButton), document.getElementById('container'));
+</script>
