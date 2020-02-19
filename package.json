@@ -137,7 +137,7 @@
     "chai-as-promised": "^6.0.0",
     "chai-enzyme": "^0.6.1",
     "cheerio": "^0.22.0",
-    "codecov": "^1.0.1",
+    "codecov": "^3.6.5",
     "compression": "^1.6.2",
     "css-loader": "^0.28.4",
     "cssnano": "^3.7.4",
