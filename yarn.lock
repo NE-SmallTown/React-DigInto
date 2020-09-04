@@ -1983,8 +1983,7 @@ create-react-class@^15.5.1, create-react-class@^15.5.2:
     object-assign "^4.1.1"
 
 "create-subscription@link:./react-build/create-subscription":
-  version "0.0.0"
-  uid ""
+  version "16.9.0"
 
 cross-spawn@^3.0.0:
   version "3.0.1"
@@ -2811,7 +2810,7 @@ event-emitter@~0.3.5:
 
 event-stream@~3.3.0:
   version "3.3.4"
-  resolved "http://registry.npmjs.org/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
+  resolved "https://registry.npmjs.org/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
   dependencies:
     duplexer "~0.1.1"
     from "~0"
@@ -3839,8 +3838,7 @@ inquirer@^0.12.0:
     through "^2.3.6"
 
 "interaction-tracking@link:./react-build/interaction-tracking":
-  version "0.0.0"
-  uid ""
+  version "0.0.1"
 
 interpret@^1.0.0:
   version "1.1.0"
@@ -4937,8 +4935,8 @@ lodash.memoize@^4.1.2:
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
 
 lodash.merge@^4.4.0:
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.1.tgz#adc25d9cb99b9391c59624f379fbba60d7111d54"
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
 
 lodash.mergewith@^4.6.0:
   version "4.6.1"
@@ -5638,7 +5636,7 @@ once@1.x, once@^1.3.0, once@^1.4.0:
 
 onetime@^1.0.0:
   version "1.1.0"
-  resolved "http://registry.npmjs.org/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
+  resolved "https://registry.npmjs.org/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
 optimist@^0.6.1:
   version "0.6.1"
@@ -6457,8 +6455,12 @@ react-addons-test-utils@^15.0.0:
   resolved "https://registry.yarnpkg.com/react-addons-test-utils/-/react-addons-test-utils-15.6.2.tgz#c12b6efdc2247c10da7b8770d185080a7b047156"
 
 "react-dom@link:./react-build/react-dom":
-  version "0.0.0"
-  uid ""
+  version "16.9.0"
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.15.0"
 
 react-element-to-jsx-string@^5.0.0:
   version "5.0.7"
@@ -6471,17 +6473,21 @@ react-element-to-jsx-string@^5.0.0:
     stringify-object "2.4.0"
     traverse "^0.6.6"
 
-react-is@^16.5.1:
-  version "16.5.1"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.5.1.tgz#c6e8734fd548a22e1cef4fd0833afbeb433b85ee"
+react-is@^16.8.6:
+  version "16.13.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
 
 "react-is@link:./react-build/react-is":
-  version "0.0.0"
-  uid ""
+  version "16.9.0"
 
 "react-noop-renderer@link:./react-build/react-noop-renderer":
-  version "0.0.0"
-  uid ""
+  version "16.0.0"
+  dependencies:
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    react-reconciler "*"
+    react-stream "*"
+    regenerator-runtime "^0.11.0"
 
 react-reconciler@*:
   version "0.14.0"
@@ -6493,8 +6499,12 @@ react-reconciler@*:
     schedule "^0.4.0"
 
 "react-reconciler@link:./react-build/react-reconciler":
-  version "0.0.0"
-  uid ""
+  version "0.21.0"
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.15.0"
 
 react-redux@^4.4.6:
   version "4.4.9"
@@ -6520,16 +6530,28 @@ react-router@^3.0.0:
     warning "^3.0.0"
 
 "react-scheduler@link:./react-build/react-scheduler":
-  version "0.0.0"
-  uid ""
+  version "0.1.0-alpha-1"
+  dependencies:
+    object-assign "^4.1.1"
+
+react-stream@*:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/react-stream/-/react-stream-0.0.1.tgz#c7b471c96f3a786b1bc2f30e9a14ce43ab9f861a"
 
 "react-test-renderer@link:./react-build/react-test-renderer":
-  version "0.0.0"
-  uid ""
+  version "16.9.0"
+  dependencies:
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    react-is "^16.8.6"
+    scheduler "^0.15.0"
 
 "react@link:./react-build/react":
-  version "0.0.0"
-  uid ""
+  version "16.9.0"
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
 
 read-pkg-up@^1.0.1:
   version "1.0.1"
@@ -6969,8 +6991,16 @@ schedule@^0.4.0:
     object-assign "^4.1.1"
 
 "schedule@link:./react-build/schedule":
-  version "0.0.0"
-  uid ""
+  version "0.4.0"
+  dependencies:
+    object-assign "^4.1.1"
+
+scheduler@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.15.0.tgz#6bfcf80ff850b280fed4aeecc6513bc0b4f17f8e"
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
 
 schema-utils@^0.3.0:
   version "0.3.0"
@@ -7090,7 +7120,6 @@ shallowequal@^0.2.2:
 
 "shared@link:./react-build/shared":
   version "0.0.0"
-  uid ""
 
 shebang-command@^1.2.0:
   version "1.2.0"
@@ -7119,8 +7148,7 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
 "simple-cache-provider@link:./react-build/simple-cache-provider":
-  version "0.0.0"
-  uid ""
+  version "0.9.0"
 
 sinon-chai@^2.8.0:
   version "2.14.0"
