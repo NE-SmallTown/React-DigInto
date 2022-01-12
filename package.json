@@ -93,7 +93,7 @@
     "css-animation": "^1.4.1",
     "expect": "^21.2.1",
     "highlight.js": "^9.12.0",
-    "markdown-it": "^8.4.0",
+    "markdown-it": "^12.3.2",
     "prop-types": "^15.5.10",
     "rc-menu": "^5.1.4",
     "react": "link:./react-build/react",
